@@ -11,6 +11,7 @@
 
 #include "cocos2d.h"
 #include "ShuiGuan.h"
+#include "Shit.h"
 
 USING_NS_CC;
 
@@ -44,6 +45,8 @@ public:
     //掉落新水管
     void dropShuiGuan();
     
+    void addShit();
+    
     bool isConnectLeft(ShuiGuan* shuiguan);
     bool isConnectUp(ShuiGuan* shuiguan);
     bool isConnectRight(ShuiGuan* shuiguan);
@@ -59,6 +62,7 @@ private:
     float shuiGuanWidth;
     Size winSize;
     ShuiGuan* shuiGuanVector[7][8];
+    Shit* shitArray[7][8];
     
     int leftDirection[4][4] = {{-1,1,-1,3},{0,1,2,3},{-1,-1,2,3},{0,-1,2,3}};
     int upDirection[4][4] = {{0,-1,2,-1},{0,1,2,3},{0,-1,-1,3},{0,1,-1,3}};

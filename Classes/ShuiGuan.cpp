@@ -9,10 +9,10 @@
 #include "ShuiGuan.h"
 
 
-ShuiGuan* ShuiGuan::createShuiGuan(int x, int y,int shuiGuanIndex)
+ShuiGuan* ShuiGuan::createShuiGuan(int x, int y)
 {
     auto shuiGuan = new ShuiGuan();
-    if (shuiGuan and shuiGuan->initShuiGuan(x,y,shuiGuanIndex)) {
+    if (shuiGuan and shuiGuan->initShuiGuan(x,y)) {
         shuiGuan->autorelease();
         return shuiGuan;
     }
@@ -23,17 +23,28 @@ ShuiGuan* ShuiGuan::createShuiGuan(int x, int y,int shuiGuanIndex)
     return nullptr;
 }
 
-bool ShuiGuan::initShuiGuan(int x, int y, int shuiGuanIndex)
+bool ShuiGuan::initShuiGuan(int x, int y)
 {
-    shuiGuanIndex = shuiGuanIndex == 0?RandomHelper::random_int(0, 3):shuiGuanIndex;
-    auto str = StringUtils::format("shuiguan0_%d.png",shuiGuanIndex);
+    auto random = RandomHelper::random_int(0, 100);
+    ShuiGuanTypeIndex shuiguanTypeIndex;
+    if (random < 5) {
+        shuiguanTypeIndex = ShuiGuanTypeIndex::SHIZHI;
+    }else if (random < 25){
+        shuiguanTypeIndex = ShuiGuanTypeIndex::TZHI;
+    }else if (random < 65){
+        shuiguanTypeIndex = ShuiGuanTypeIndex::YIZHI;
+    }else{
+        shuiguanTypeIndex = ShuiGuanTypeIndex::ZHIJIAO;
+    }
+    
+    auto str = StringUtils::format("shuiguan0_%d.png",shuiguanTypeIndex);
     if (!Sprite::initWithSpriteFrameName(str.c_str())) {
         return false;
     }
     
     setX(x);
     setY(y);
-    setShuiGuanIndex(shuiGuanIndex);
+    setShuiGuanIndex(shuiguanTypeIndex);
     setType(ShuiGuanType::GRAY);
     
     return true;

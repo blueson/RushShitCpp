@@ -21,19 +21,27 @@ enum ShuiGuanType
     LIGHT_GREEN
 };
 
+enum ShuiGuanTypeIndex
+{
+    YIZHI = 0,
+    SHIZHI,
+    ZHIJIAO,
+    TZHI
+};
+
 class ShuiGuan : public Sprite
 {
 public:
     
-    static ShuiGuan* createShuiGuan(int x,int y,int shuiGuanIndex = 0);
-    bool initShuiGuan(int x,int y,int shuiGuanIndex);
+    static ShuiGuan* createShuiGuan(int x,int y);
+    bool initShuiGuan(int x,int y);
     
     void changeDirection();
     void changeType(ShuiGuanType type);
     
     CC_SYNTHESIZE(int, _x, X);
     CC_SYNTHESIZE(int, _y, Y);
-    CC_SYNTHESIZE(int, _shuiGuanIndex, ShuiGuanIndex);
+    CC_SYNTHESIZE(ShuiGuanTypeIndex, _shuiGuanIndex, ShuiGuanIndex);
     CC_SYNTHESIZE(ShuiGuanType, _type, Type);
     CC_SYNTHESIZE(int, _direction, Direction);
 };

@@ -36,6 +36,7 @@ bool GameScene::init()
     }
     
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("shuiguan.plist", "shuiguan.pvr.ccz");
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("shit.plist","shit.pvr.ccz");
     
     initShuiGuan();
     
@@ -45,8 +46,12 @@ bool GameScene::init()
         for (int y = 0 ; y < yCount; ++y) {
             for (int x = 0; x < xCount; ++x) {
                 if (shuiGuanVector[x][y]->getBoundingBox().containsPoint(touchPos)) {
-                    shuiGuanVector[x][y]->changeDirection();
-                    check();
+                    if (shitArray[x][y] != nullptr) {
+                        shitArray[x][y]->clickToJiao();
+                    }else{
+                        shuiGuanVector[x][y]->changeDirection();
+                        check();
+                    }
                     return false;
                 }
             }
@@ -65,9 +70,11 @@ void GameScene::initShuiGuan()
     for (int y = 0; y<yCount; ++y) {
         for (int x = 0; x<xCount; ++x) {
             shuiGuanVector[x][y] = createAndDropShuiGuan(x, y);
+            shitArray[x][y] = nullptr;
         }
     }
     check();
+    addShit();
 }
 
 ShuiGuan* GameScene::createAndDropShuiGuan(int x, int y)
@@ -91,6 +98,7 @@ Vec2 GameScene::getEndPosition(int x, int y)
 
 void GameScene::check()
 {
+    unschedule("removeShuiGuan");
     clearShuiGuan();
     for (int y = 0; y<yCount; ++y) {
         checkShuiGuan(shuiGuanVector[0][y],ConnectDir::RIGHT,ShuiGuanType::RED);
@@ -170,6 +178,10 @@ void GameScene::removeConnectShuiGuan()
     for (int y = 0; y < yCount; ++y) {
         for (int x = 0; x < xCount; ++x) {
             if (shuiGuanVector[x][y]->getType() == ShuiGuanType::LIGHT_GREEN) {
+                
+                if (shitArray[x][y] != nullptr) {
+                    shitArray[x][y] = nullptr;
+                }
                 shuiGuanVector[x][y]->removeFromParent();
                 shuiGuanVector[x][y] = nullptr;
             }
@@ -194,6 +206,13 @@ void GameScene::dropShuiGuan()
                     shuiGuanVector[x][newY] = shuiGuanVector[x][y];
                     shuiGuanVector[x][newY]->setY(newY);
                     shuiGuanVector[x][y] = nullptr;
+                    
+                    if (shitArray[x][y] != nullptr) {
+                        shitArray[x][newY] = shitArray[x][y];
+                        shitArray[x][newY]->setY(newY);
+                        shitArray[x][y] = nullptr;
+                    }
+                    
                     auto endPosition = getEndPosition(x, newY);
                     auto moveAction = MoveTo::create(shuiGuanVector[x][newY]->getPositionY() / winSize.height/2, endPosition);
                     shuiGuanVector[x][newY]->stopAllActions();
@@ -208,8 +227,31 @@ void GameScene::dropShuiGuan()
             shuiGuanVector[i][yCount - 1 - j] = createAndDropShuiGuan(i, yCount - 1 - j);
         }
     }
-
     check();
+    addShit();
+}
+
+//添加便便
+void GameScene::addShit()
+{
+    bool isAdd = false;
+    while (!isAdd) {
+        auto random = RandomHelper::random_int(0, xCount*yCount - 1);
+        auto y = (int)(random / xCount);
+        auto x = random - y * xCount;
+        
+        if (shitArray[x][y] == nullptr) {
+            auto shuiguan = shuiGuanVector[x][y];
+            auto endPosition = Vec2(shuiguan->getContentSize().width/2,shuiguan->getContentSize().height/2);
+            auto shit = Shit::createShit(x, y);
+            shit->setPosition(Vec2(endPosition.x,winSize.height - shuiguan->getPositionY() + shit->getContentSize().height/2));
+            auto moveAction = MoveTo::create(0.3, endPosition);
+            shit->runAction(moveAction);
+            shuiguan->addChild(shit);
+            shitArray[x][y] = shit;
+            isAdd = true;
+        }
+    }
 }
 
 bool GameScene::isConnectLeft(ShuiGuan* shuiguan)
