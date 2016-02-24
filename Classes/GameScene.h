@@ -15,6 +15,9 @@
 
 USING_NS_CC;
 
+#define ROW_COUNT 9
+#define COLUMN_COUNT 7
+
 enum ConnectDir
 {
     LEFT = 0,
@@ -55,14 +58,20 @@ public:
     CREATE_FUNC(GameScene);
     
 private:
-    int xCount;
-    int yCount;
+    int xCount; //水管的列数
+    int yCount; //水管的行数
+    int level;  //当前的等级
+    int score;  //当前的分数
+    int targetScore;    //目标分数
+    int lastTimes;  //剩余的时间
     float startX;
     float startY;
     float shuiGuanWidth;
     Size winSize;
-    ShuiGuan* shuiGuanVector[7][8];
-    Shit* shitArray[7][8];
+    Node* _mainGame;
+    
+    ShuiGuan* shuiGuanVector[COLUMN_COUNT][ROW_COUNT];
+    Shit* shitArray[COLUMN_COUNT][ROW_COUNT];
     
     int leftDirection[4][4] = {{-1,1,-1,3},{0,1,2,3},{-1,-1,2,3},{0,-1,2,3}};
     int upDirection[4][4] = {{0,-1,2,-1},{0,1,2,3},{0,-1,-1,3},{0,1,-1,3}};

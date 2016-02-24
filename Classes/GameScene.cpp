@@ -7,13 +7,20 @@
 //
 
 #include "GameScene.h"
+#include <iostream>
+#include "cocostudio/CocoStudio.h"
+#include "ui/CocosGUI.h"
 
-GameScene::GameScene():xCount(7),yCount(8)
+GameScene::GameScene():xCount(COLUMN_COUNT),yCount(ROW_COUNT),level(1)
 {
     winSize = Director::getInstance()->getVisibleSize();
     shuiGuanWidth = winSize.width/8;
     startX = shuiGuanWidth/2;
-    startY = 100;
+    startY = 0;
+    
+    score = 0;
+    targetScore = level * 100 + 100;
+    lastTimes = level * 30 + 30;
 }
 
 GameScene::~GameScene()
@@ -38,11 +45,18 @@ bool GameScene::init()
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("shuiguan.plist", "shuiguan.pvr.ccz");
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile("shit.plist","shit.pvr.ccz");
     
+    auto node = CSLoader::getInstance()->createNode("MainLayer.csb");
+    addChild(node);
+    
+    _mainGame = node->getChildByName("Panel_1")->getChildByName("Panel_game");
+    
     initShuiGuan();
     
     auto listener = EventListenerTouchOneByOne::create();
     listener->onTouchBegan = [=](Touch* touch,Event* event){
         auto touchPos = touch->getLocation();
+        touchPos = _mainGame->convertToNodeSpace(touchPos);
+        printf("水管的大小width:%f,height:%f",shuiGuanVector[0][0]->getBoundingBox().size.width,shuiGuanVector[0][0]->getBoundingBox().size.height);
         for (int y = 0 ; y < yCount; ++y) {
             for (int x = 0; x < xCount; ++x) {
                 if (shuiGuanVector[x][y]->getBoundingBox().containsPoint(touchPos)) {
@@ -85,7 +99,7 @@ ShuiGuan* GameScene::createAndDropShuiGuan(int x, int y)
     shuiguan->setPosition(startPosition);
     auto moveAction = MoveTo::create(startPosition.y / winSize.height/2, endPosition);
     shuiguan->runAction(moveAction);
-    addChild(shuiguan);
+    _mainGame->addChild(shuiguan);
     return shuiguan;
 }
 

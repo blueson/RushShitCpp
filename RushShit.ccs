@@ -3,8 +3,14 @@
   <SolutionFolder>
     <Group ctype="ResourceGroup">
       <RootFolder Name=".">
-        <Project Name="MainScene.csd" Type="Scene" />
-        <Image Name="HelloWorld.png" />
+        <Project Name="MainLayer.csd" Type="Layer" />
+        <Folder Name="ui">
+          <Image Name="main_bg.png" />
+          <Image Name="shuiguan_bg.png" />
+          <Image Name="top_bg.png" />
+          <Image Name="time01.png" />
+          <Image Name="time02.png" />
+        </Folder>
       </RootFolder>
     </Group>
   </SolutionFolder>
